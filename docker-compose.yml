@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+      POSTGRES_DB: auth_system_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_system_db"]
+      interval: 2s
+      timeout: 3s
+      retries: 3
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: postgresql+asyncpg://auth_user:auth_password@db:5432/auth_system_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "
+        echo 'Starting application...' &&
+        uvicorn effective_mobile_fast_api.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  init-data:
+    build: .
+    depends_on:
+      app:
+        condition: service_started
+    environment:
+      DB_URL: postgresql+asyncpg://auth_user:auth_password@db:5432/auth_system_db
+    command: >
+      sh -c "
+        echo 'Waiting for app to create tables...' &&
+        sleep 5 &&
+        echo 'Initializing test data...' &&
+        python effective_mobile_fast_api/scripts/init_test_data.py
+      "
+    profiles:
+      - init
+
+volumes:
+  pgdata:

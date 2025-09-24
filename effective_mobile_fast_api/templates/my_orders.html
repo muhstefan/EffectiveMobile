@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Мои заказы - Система авторизации{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+    <div class="orders-header">
+        <h1>📋 Мои заказы</h1>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <h3>Заказ #{{ order.id }}</h3>
+                    <span class="order-status status-{{ order.status }}">{{ order.status }}</span>
+                </div>
+                
+                <div class="order-details">
+                    <div class="order-info">
+                        <p><strong>Продукт ID:</strong> {{ order.product_id }}</p>
+                        <p><strong>Количество:</strong> {{ order.quantity }}</p>
+                        <p><strong>Сумма:</strong> {{ order.total_amount }} ₽</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>У вас пока нет заказов</h2>
+            <p>Создайте свой первый заказ!</p>
+            <a href="/business/products" class="btn btn-primary">Посмотреть продукты</a>
+        </div>
+    {% endif %}
+    
+    <div class="actions">
+        <a href="/business/orders" class="btn btn-secondary">Все заказы</a>
+        <a href="/" class="btn btn-outline">На главную</a>
+    </div>
+</div>
+{% endblock %}
+
+
+

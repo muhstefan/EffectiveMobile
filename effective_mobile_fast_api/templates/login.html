@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - Система авторизации{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>🔐 Вход в систему</h2>
+        
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="post" action="/auth/login" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="username" required 
+                       placeholder="admin@example.com" value="{{ email|default('') }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="admin123">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">Войти</button>
+        </form>
+        
+        <div class="auth-links">
+            <p>Нет аккаунта? <a href="/auth/register">Зарегистрироваться</a></p>
+            <p><a href="/">← На главную</a></p>
+        </div>
+        
+        <div class="demo-credentials">
+            <h3>Тестовые данные:</h3>
+            <div class="demo-item">
+                <strong>Админ:</strong> admin@example.com / admin1234
+            </div>
+            <div class="demo-item">
+                <strong>Менеджер:</strong> manager@example.com / manager1234
+            </div>
+            <div class="demo-item">
+                <strong>Пользователь:</strong> user@example.com / user1234
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

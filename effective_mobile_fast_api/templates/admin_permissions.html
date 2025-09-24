@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Управление разрешениями - Админ панель{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header">
+        <h1>🔐 Управление разрешениями</h1>
+        <a href="/admin" class="btn btn-secondary">← Назад в админ панель</a>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+    
+    <div class="info-box">
+        <p><strong>Примечание:</strong> Разрешения предопределены в системе. Администратор может только назначать роли пользователям.</p>
+    </div>
+    
+    <!-- Список разрешений -->
+    <div class="permissions-list">
+        <h3>Список разрешений</h3>
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Ресурс</th>
+                        <th>Действие</th>
+                        <th>Описание</th>
+                        <th>Роли</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for permission in permissions %}
+                    <tr>
+                        <td>{{ permission.id[:8] }}...</td>
+                        <td><strong>{{ permission.name }}</strong></td>
+                        <td><span class="resource-tag">{{ permission.resource }}</span></td>
+                        <td><span class="action-tag">{{ permission.action }}</span></td>
+                        <td>{{ permission.description or "—" }}</td>
+                        <td>{{ permission.role_count }} ролей</td>
+                        <td>
+                            <span class="btn btn-sm btn-secondary" style="opacity: 0.5;">Только просмотр</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

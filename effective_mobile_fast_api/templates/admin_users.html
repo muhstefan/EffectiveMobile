@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Управление пользователями - Админ панель{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header">
+        <h1>👥 Управление пользователями</h1>
+        <a href="/admin" class="btn btn-secondary">← Назад в админ панель</a>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+    
+    <div class="admin-actions">
+        <button onclick="showCreateUserForm()" class="btn btn-primary">+ Создать пользователя</button>
+    </div>
+    
+    <!-- Форма создания пользователя -->
+    <div id="createUserForm" class="form-container" style="display: none;">
+        <h3>Создать нового пользователя</h3>
+        <form method="post" action="/admin/users/create">
+            <div class="form-group">
+                <label for="first_name">Имя:</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Фамилия:</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="middle_name">Отчество:</label>
+                <input type="text" id="middle_name" name="middle_name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <button type="button" onclick="hideCreateUserForm()" class="btn btn-secondary">Отмена</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Список пользователей -->
+    <div class="users-list">
+        <h3>Список пользователей</h3>
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Статус</th>
+                        <th>Роли</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id[:8] }}...</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="status status-{{ user.status }}">{{ user.status }}</span>
+                        </td>
+                        <td>
+                            {% for role in user.roles %}
+                                <span class="role-tag">{{ role.name }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="/admin/users/{{ user.id }}/edit" class="btn btn-sm btn-primary">Редактировать</a>
+                            {% if user.status == "active" %}
+                                <form method="post" action="/admin/users/{{ user.id }}/delete" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить пользователя?')">Удалить</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="/admin/users/{{ user.id }}/restore" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">Восстановить</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function showCreateUserForm() {
+    document.getElementById('createUserForm').style.display = 'block';
+}
+
+function hideCreateUserForm() {
+    document.getElementById('createUserForm').style.display = 'none';
+}
+</script>
+{% endblock %}

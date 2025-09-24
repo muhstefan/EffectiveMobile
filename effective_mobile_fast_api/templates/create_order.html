@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Создать заказ - Система авторизации{% endblock %}
+
+{% block content %}
+<div class="create-order-container">
+    <div class="create-order-header">
+        <h1>🛒 Создать заказ</h1>
+        <a href="/business/products" class="btn btn-outline">← К продуктам</a>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    <div class="create-order-form">
+        <form method="post" action="/business/orders/create" class="order-form">
+            <div class="form-group">
+                <label for="product_id">Выберите продукт:</label>
+                <select id="product_id" name="product_id" required>
+                    {% if selected_product %}
+                        <option value="{{ selected_product.id }}" selected>
+                            {{ selected_product.name }} - {{ selected_product.price }} ₽
+                        </option>
+                    {% else %}
+                        <option value="">Выберите продукт</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}">
+                                {{ product.name }} - {{ product.price }} ₽
+                            </option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">Количество:</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать заказ</button>
+                <a href="/business/products" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+    
+    {% if selected_product %}
+    <div class="product-preview">
+        <h3>Выбранный продукт:</h3>
+        <div class="product-card">
+            <div class="product-header">
+                <h4>{{ selected_product.name }}</h4>
+                <span class="product-category">{{ selected_product.category }}</span>
+            </div>
+            {% if selected_product.description %}
+            <p class="product-description">{{ selected_product.description }}</p>
+            {% endif %}
+            <div class="product-price">{{ selected_product.price }} ₽</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Обновление цены при изменении количества
+document.getElementById('quantity').addEventListener('input', function() {
+    const quantity = parseInt(this.value) || 0;
+    const productSelect = document.getElementById('product_id');
+    const selectedOption = productSelect.options[productSelect.selectedIndex];
+    
+    if (selectedOption.value) {
+        const priceText = selectedOption.text.split(' - ')[1];
+        const price = parseFloat(priceText.replace(' ₽', ''));
+        const total = price * quantity;
+        
+        // Можно добавить отображение общей суммы
+        console.log(`Общая сумма: ${total} ₽`);
+    }
+});
+</script>
+{% endblock %}
+

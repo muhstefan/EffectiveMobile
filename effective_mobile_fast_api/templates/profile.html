@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль - {{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>👤 Мой профиль</h1>
+        <div class="user-avatar">
+            {{ user.first_name[0] }}{{ user.last_name[0] }}
+        </div>
+    </div>
+    
+    <div class="profile-content">
+        <div class="profile-info">
+            <h2>Личная информация</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Имя:</label>
+                    <span>{{ user.first_name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Фамилия:</label>
+                    <span>{{ user.last_name }}</span>
+                </div>
+                {% if user.middle_name %}
+                <div class="info-item">
+                    <label>Отчество:</label>
+                    <span>{{ user.middle_name }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <label>Email:</label>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Статус:</label>
+                    <span class="status status-{{ user.status }}">{{ user.status }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-actions">
+            <h2>Действия</h2>
+            <div class="action-buttons">
+                <a href="/users/me/edit" class="btn btn-primary">Редактировать профиль</a>
+                <a href="/business/products" class="btn btn-secondary">Продукты</a>
+                <a href="/business/orders/my" class="btn btn-secondary">Мои заказы</a>
+                <a href="/users/me/delete" class="btn btn-danger" 
+                   onclick="return confirm('Вы уверены, что хотите удалить аккаунт?')">
+                   Удалить аккаунт
+                </a>
+            </div>
+        </div>
+        
+        {% if user_roles %}
+        <div class="user-roles">
+            <h2>Роли и права</h2>
+            <div class="roles-list">
+                {% for role in user_roles %}
+                <div class="role-item">
+                    <h3>{{ role.name }}</h3>
+                    <p>{{ role.description|default("Описание отсутствует") }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+

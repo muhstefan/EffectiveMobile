@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Продукты - Система авторизации{% endblock %}
+
+{% block content %}
+<div class="products-container">
+    <div class="products-header">
+        <h1>📦 Продукты</h1>
+        {% if can_create %}
+            <a href="/business/products/create" class="btn btn-primary">Добавить продукт</a>
+        {% endif %}
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-header">
+                    <h3>{{ product.name }}</h3>
+                    <span class="product-category">{{ product.category }}</span>
+                </div>
+                
+                {% if product.description %}
+                <p class="product-description">{{ product.description }}</p>
+                {% endif %}
+                
+                <div class="product-footer">
+                    <div class="product-price">{{ product.price }} ₽</div>
+                    <div class="product-actions">
+                        {% if can_order %}
+                            <a href="/business/orders/create?product_id={{ product.id }}" class="btn btn-sm btn-primary">Заказать</a>
+                        {% endif %}
+                        {% if can_edit %}
+                            <a href="/business/products/{{ product.id }}/edit" class="btn btn-sm btn-secondary">Редактировать</a>
+                        {% endif %}
+                        {% if can_delete %}
+                            <a href="/business/products/{{ product.id }}/delete" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Удалить продукт?')">Удалить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>Продукты не найдены</h2>
+            <p>Пока нет доступных продуктов.</p>
+            {% if can_create %}
+                <a href="/business/products/create" class="btn btn-primary">Добавить первый продукт</a>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <div class="permissions-info">
+        <h3>Ваши права доступа:</h3>
+        <ul>
+            <li>Чтение продуктов: ✅</li>
+            {% if can_create %}
+                <li>Создание продуктов: ✅</li>
+            {% else %}
+                <li>Создание продуктов: ❌</li>
+            {% endif %}
+            {% if can_order %}
+                <li>Создание заказов: ✅</li>
+            {% else %}
+                <li>Создание заказов: ❌</li>
+            {% endif %}
+            {% if can_edit %}
+                <li>Редактирование продуктов: ✅</li>
+            {% else %}
+                <li>Редактирование продуктов: ❌</li>
+            {% endif %}
+            {% if can_delete %}
+                <li>Удаление продуктов: ✅</li>
+            {% else %}
+                <li>Удаление продуктов: ❌</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+
+

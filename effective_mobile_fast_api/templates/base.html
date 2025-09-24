@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Система авторизации{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo-link">
+                <h1 class="logo">🔐 Auth System</h1>
+            </a>
+            <nav class="nav">
+                {% if user %}
+                    <span class="user-info">Привет, {{ user.first_name }} {{ user.last_name }}!</span>
+                    <a href="/users/me" class="btn btn-secondary">Мой профиль</a>
+                    <form method="post" action="/auth/logout" style="display: inline;">
+                        <button type="submit" class="btn btn-outline">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="/auth/login" class="btn btn-primary">Войти</a>
+                    <a href="/auth/register" class="btn btn-secondary">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Custom Authentication & Authorization System</p>
+        </div>
+    </footer>
+</body>
+</html>

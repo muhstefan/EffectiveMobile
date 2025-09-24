@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование пользователя - Админ панель{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header">
+        <h1>✏️ Редактирование пользователя</h1>
+        <a href="/admin/users" class="btn btn-secondary">← Назад к пользователям</a>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+    
+    <div class="edit-sections">
+        <!-- Основная информация -->
+        <div class="edit-section">
+            <h3>Основная информация</h3>
+            <form method="post" action="/admin/users/{{ target_user.id }}/edit">
+                <div class="form-group">
+                    <label for="first_name">Имя:</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ target_user.first_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Фамилия:</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ target_user.last_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="middle_name">Отчество:</label>
+                    <input type="text" id="middle_name" name="middle_name" value="{{ target_user.middle_name or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ target_user.email }}" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Управление ролями -->
+        <div class="edit-section">
+            <h3>Управление ролями</h3>
+            <div class="user-roles">
+                <h4>Текущие роли:</h4>
+                {% if target_user.roles %}
+                    <div class="roles-list">
+                        {% for role in target_user.roles %}
+                            <div class="role-item">
+                                <span class="role-tag">{{ role.name }}</span>
+                                <form method="post" action="/admin/users/{{ target_user.id }}/roles/remove" style="display: inline;">
+                                    <input type="hidden" name="role_id" value="{{ role.id }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Убрать роль {{ role.name }}?')">Убрать</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>У пользователя нет назначенных ролей</p>
+                {% endif %}
+                
+                <h4>Добавить роль:</h4>
+                <form method="post" action="/admin/users/{{ target_user.id }}/roles/assign">
+                    <div class="form-group">
+                        <select name="role_id" required>
+                            <option value="">Выберите роль</option>
+                            {% for role in all_roles %}
+                                {% if role.id not in user_role_ids %}
+                                    <option value="{{ role.id }}">{{ role.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Добавить роль</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Управление статусом -->
+        <div class="edit-section">
+            <h3>Управление статусом</h3>
+            <div class="status-actions">
+                {% if target_user.status == "active" %}
+                    <form method="post" action="/admin/users/{{ target_user.id }}/delete" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить пользователя?')">Удалить пользователя</button>
+                    </form>
+                {% else %}
+                    <form method="post" action="/admin/users/{{ target_user.id }}/restore" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Восстановить пользователя</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.edit-sections {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.edit-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.edit-section h3 {
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.user-roles h4 {
+    color: #374151;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.roles-list {
+    margin-bottom: 1.5rem;
+}
+
+.role-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+}
+
+.status-actions {
+    text-align: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .edit-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    .role-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+}
+</style>
+{% endblock %}
+
+

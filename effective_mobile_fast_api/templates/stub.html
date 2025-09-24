@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Система авторизации{% endblock %}
+
+{% block content %}
+<div class="stub-container">
+    <div class="stub-header">
+        <h1>{{ title }}</h1>
+        <a href="/business/products" class="btn btn-outline">← К продуктам</a>
+    </div>
+    
+    <div class="stub-content">
+        <div class="stub-message">
+            <h2>{{ message }}</h2>
+            <p>{{ description }}</p>
+        </div>
+        
+        <div class="stub-actions">
+            <a href="/business/products" class="btn btn-primary">Вернуться к продуктам</a>
+            <a href="/" class="btn btn-secondary">На главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
